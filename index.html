@@ -1,0 +1,126 @@
+<script>
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', '/users');
+		xhr.onload = () => {
+			if(xhr.status === 200){
+				const data = JSON.parse(xhr.responseText);
+				let html = '';
+				for (let el of data){
+					html += `<p>${el.name}</p>`;
+				}
+
+				document.getElementById('dataContainer').innerHTML = html;
+			}
+		};
+
+		xhr.send();
+</script>
+
+<script type="text/javascript">
+	
+	/*
+	1. Hare reaches the end = no duplicates.
+
+	The nodes with the value 7 have different next values, so there is no way for the pointers to loop back to a previously visited node. As a result, the findDuplicate function will return null because it will not find a cycle in the linked list.
+
+	One option is to use a hash table to store the values of the nodes as you iterate through the linked list. If you encounter a value that is already in the hash table, it means that you have found a duplicate element.
+
+	*/
+
+class LinkedList{
+	constructor(head = null){
+		this.head = head;
+	}
+
+	appendNode(newNode){
+		let node = this.head;
+		if(node === null){
+			this.head = newNode;
+			return;
+		}
+
+		while(node.next){
+			node = node.next;
+		}
+
+		node.next = newNode;
+	}
+
+	printList(){
+		let node = this.head;
+		process.stdout.write('HEAD->');
+		while(node){
+			process.stdout.write(node.value + "->");
+			node = node.next;
+		}
+
+		console.log("NULL");
+	}
+
+	
+	findDuplicateCycle(){
+		let slow = this.head;
+		let fast = this.head;
+		while(fast !== null && fast.next !== null){
+			slow = slow.next;
+			fast = fast.next.next;
+			if(fast === slow){
+				break;
+			}
+		}
+
+		if(fast === null || fast.next === null){
+			return null;
+		}
+
+		slow = this.head;
+		while(slow !== fast){
+			slow = slow.next;
+			fast = fast.next;
+		}
+
+		return slow;
+	}
+}
+
+class Node{
+	constructor(value){
+		this.value = value;
+		this.next = null;
+	}
+}
+
+const myList = new LinkedList();
+myList.appendNode(new Node(1));
+myList.appendNode(new Node(7));
+myList.appendNode(new Node(5));
+myList.appendNode(new Node(7));
+myList.appendNode(new Node(9));
+
+myList.printList();
+myList.findDuplicateCycle();
+
+</script>
+
+node *find_loop(node *head)
+{
+	node *p1;
+	node *p2;
+
+	if (head == NULL)
+		return (NULL);
+	p1 = head;
+	p2 = head;
+	while (p2->next != NULL && p2->next->next != NULL)
+	{
+		p1 = p1->next;
+		p2 = p2->next->next;
+		if (p1 == p2)
+		{
+			p1 = head;
+			while (p1 != p2)
+			{
+				p1 = p1->next;
+				p2 = p2->next;
+			}
+			return (p2);
